@@ -17,7 +17,7 @@ public class WordCount {
 
         SparkConf conf = new SparkConf().setAppName("wordcount").setMaster("local");
         JavaSparkContext jsc = new JavaSparkContext(conf);
-        JavaPairRDD<String, Integer> resultRDD = jsc.textFile("C:\\Users\\guoxiang.HDSC\\Desktop\\wordcount.txt")
+        JavaPairRDD<String, Integer> resultRDD = jsc.textFile("res/wordcount.txt")
                 .flatMap(line -> Arrays.asList(line.split(" ")).iterator())
                 .mapToPair(word -> new Tuple2<>(word, 1))
                 .reduceByKey((a, b) -> a + b);
@@ -26,5 +26,8 @@ public class WordCount {
                 .sorted(Comparator.comparingInt(Tuple2::_2))
                 .forEach(System.out::println);
 
+
+        resultRDD.sample(true, 0.02, System.currentTimeMillis())
+                .foreach(x -> System.out.println(x));
     }
 }

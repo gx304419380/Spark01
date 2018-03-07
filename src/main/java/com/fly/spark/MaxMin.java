@@ -12,7 +12,7 @@ public class MaxMin {
     public static void main(String[] args) {
         SparkConf conf = new SparkConf().setAppName("maxmin").setMaster("local");
         JavaSparkContext jsc = new JavaSparkContext(conf);
-        JavaRDD<String> textFile = jsc.textFile("C:\\Users\\guoxiang.HDSC\\Desktop\\maxmin.txt");
+        JavaRDD<String> textFile = jsc.textFile("res/maxmin.txt");
         Integer max = textFile
                 .map(Integer::parseInt)
                 .reduce(Math::max);

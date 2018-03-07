@@ -1,14 +1,11 @@
 package com.fly.spark;
 
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
-import scala.tools.cmd.Spec;
 
 import java.util.*;
-import java.util.stream.Collector;
 
 /**
  * @author XXX
@@ -18,7 +15,7 @@ public class Average {
     public static void main(String[] args) {
         SparkConf conf = new SparkConf().setAppName("maxmin").setMaster("local");
         JavaSparkContext jsc = new JavaSparkContext(conf);
-        JavaRDD<String> textFile = jsc.textFile("C:\\Users\\guoxiang.HDSC\\Desktop\\average.txt");
+        JavaRDD<String> textFile = jsc.textFile("res/average.txt");
 
         textFile.mapToPair(line -> new Tuple2<>(line.split(" ")[0], Integer.parseInt(line.split(" ")[1])))
                 .reduceByKey((a, b) -> a + b)
