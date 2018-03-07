@@ -26,7 +26,6 @@ public class WordCount {
                 .sorted(Comparator.comparingInt(Tuple2::_2))
                 .forEach(System.out::println);
 
-
         resultRDD.sample(true, 0.02, System.currentTimeMillis())
                 .foreach(x -> System.out.println(x));
     }
