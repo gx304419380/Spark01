@@ -4,11 +4,15 @@ import com.fly.spark.entity.Log;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author XXX
@@ -19,10 +23,14 @@ public class LogAnalysis {
     public static void main(String[] args) {
         SparkConf conf = new SparkConf().setAppName("log-analysis").setMaster("local");
         JavaSparkContext jsc = new JavaSparkContext(conf);
+        SparkSession spark = SparkSession.builder()
+                .config(conf)
+                .getOrCreate();
         JavaRDD<String> logRDD = jsc.textFile("res/log.txt");
         JavaRDD<Log> logs = logRDD
-                .map(line -> parseLog(line))
-                .filter(log -> log != null);
+                .map(LogAnalysis::parseLog)
+                .filter(Objects::nonNull);
+        Dataset<Row> logDataset = spark.createDataFrame(logs, Log.class);
 
         List<Log> warnLog = logs
                 .filter(log -> log.getLogLevel().equals("WARN"))
@@ -35,7 +43,6 @@ public class LogAnalysis {
         errorLog.stream()
                 .filter(log -> log.getContent().toLowerCase().contains("csv header"))
                 .forEach(log -> System.out.println(log.getContent()));
-
     }
 
     public static Log parseLog(String logString) {
@@ -54,7 +61,7 @@ public class LogAnalysis {
         }
         StringBuilder content = new StringBuilder();
         for (int i = 5; i < logs.length; i++) {
-            content.append(logs[i] + " ");
+            content.append(logs[i]).append(" ");
         }
         long number = 0;
         try {
@@ -63,7 +70,6 @@ public class LogAnalysis {
             System.out.println("数字异常" + logs[2]);
             return null;
         }
-
 
         log.setDate(date);
         log.setNumber(number);

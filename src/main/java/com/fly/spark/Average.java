@@ -61,6 +61,5 @@ public class Average {
                 .collect()
                 .forEach(System.out::println);
 
-
     }
 }
